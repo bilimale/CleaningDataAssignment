@@ -17,4 +17,13 @@ You should create one R script called run_analysis.R that does the following.
 * Appropriately labels the data set with descriptive variable names. 
 * From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
 
-Good luck!
+H2. Steps to execute the project
+* Change the current working directory to a new directory for executing the project
+* Open R script run_analysis.R using editor
+* Run the script run_analysis.R.
+* Script run_analysis.R creates 2 csv files. CompleteCleanData.csv, TidyCleanedData.csv files in the current directory
+
+H1. Outputs
+1. CompleteCleanData.csv
+2. TidyCleanedData.csv
+3. codebook.md

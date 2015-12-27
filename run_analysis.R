@@ -1,4 +1,5 @@
 library(data.table)
+require(sqldf)
 
 getAssignmentData <- function() {
   
@@ -79,8 +80,8 @@ labelCleanMergedData  <- function(mergedData) {
   cleanData <- as.data.table(mergedData[,subject])
   setnames(cleanData, "V1", "subject")
   cleanData <- cbind(cleanData, mergedData[, activity] )
-  print(colnames(cleanData))
-  print(head(cleanData))
+  #print(colnames(cleanData))
+  #print(head(cleanData))
   
   setnames(cleanData, "V2", "activity")
   
@@ -90,7 +91,7 @@ labelCleanMergedData  <- function(mergedData) {
     colLabeled <-  allColumnNames[n,V2]
     
     if(colSelected == "V0")  {
-      print("Skipping")
+      #print("Skipping")
       next
     }  else {
       
@@ -111,29 +112,36 @@ labelCleanMergedData  <- function(mergedData) {
 # Add in the description for the activity
 #
 descriptionActivity <- function(cleanData)  {
-  
+  write.csv(cleanData, "CompleteCleanData.csv", sep = ",", row.names = FALSE)
 }
 
 #
 # Generate the mean for each activty for each subject
 #
-subjectAverage <- function(cleanData) {
-  totalSubject <- as.data.table(sort(unique(cleanData$subject)))
-  totalActivity <- as.data.table(sort(unique(cleanData$activity)))
+subjectAverageCreate <- function(cleanData) {
+  totalSubject <- sort(unique(cleanData$subject))
+  totalActivity <- sort(unique(cleanData$activity))
   
   averageSubjectActivity <- data.table()
   
-  for(n in seq(totalSubject)) {
-    for(k in seq_along(totalActivity)) {
+  for(n in totalSubject) {
+    for(k in totalActivity) {
       calculateAverage <- as.data.table(lapply(fn$sqldf("select * from cleanData where subject = \" $n \" and  activity =\" $k \"" ), mean))
       averageSubjectActivity <- rbind(averageSubjectActivity, calculateAverage)
       #print(lapply(fn$sqldf("select * from cleanData where subject = \" $n \" and  activity =\" $k \"" ), mean))  
-      print(n)
-      print(k)
     }
   }
   
+  #Now write the csv
+  write.csv(averageSubjectActivity, "TidyCleanedData.csv", sep = " ", row.names = FALSE)
+  averageSubjectActivity
 }
 
-mergedData <- readMergeAssignmentData()
-cleanData <- labelCleanMergedData(mergedData)
+assignment3Project <- function() {
+  #getAssignmentData()
+  mergedData <- readMergeAssignmentData()
+  cleanData <- labelCleanMergedData(mergedData)
+  cleanData <- descriptionActivity(cleanData)
+  averageSubjectActivity <- subjectAverageCreate(cleanData)
+}
+assignment3Project()
